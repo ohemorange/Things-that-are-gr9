@@ -5,4 +5,7 @@ A running list.
 * kites
 * playgrounds
 * karaoke
-
+* cats
+* pizza
+* forests
+* tea
