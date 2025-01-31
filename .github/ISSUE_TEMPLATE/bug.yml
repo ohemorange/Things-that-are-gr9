@@ -1,6 +1,7 @@
 name: Bug Report
 description: File a bug report.
 title: "[Bug]: "
+type: bug
 body:
   - type: markdown
     attributes:
@@ -26,7 +27,9 @@ body:
       description: |
         I ran this command and it produced this output. Example:
         ```
-        $ sudo certbot certonly -d example.com --staging
+        $ sudo certbot certonly -d adfsfasdf.asdfasdf --staging
+        Saving debug log to /var/log/letsencrypt/letsencrypt.log
+        Plugins selected: Authenticator nginx, Installer nginx
         Requesting a certificate for example.com
         An unexpected error occurred:
         Invalid identifiers requested :: Cannot issue for "adfsfasdf.asdfasdf": Domain name does not end with a valid public suffix (TLD)
