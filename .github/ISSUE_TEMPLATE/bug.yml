@@ -1,25 +1,33 @@
 name: Bug Report
 description: File a bug report.
 title: "[Bug]: "
-type: bug
+type: Bug
 body:
   - type: markdown
     attributes:
       value: |
         Thanks for taking the time to fill out this bug report!
-  - type: textarea
+  - type: input
     attributes:
-      label: Environment
+      label: OS
       description: |
-        examples:
-          - **OS**: Ubuntu
-          - **Version** 22.04
-          - **Install Type**: (snap, OS package manager, pip, certbot-auto, etc)
+        Describe your Operating System. Example:
+          - **OS**: Ubuntu 18.04
       value: |
-        - OS:
-        - Version:
-        - Install Type:
-      render: markdown
+        OS:
+  - type: input
+    attributes:
+      label: Installation method
+      description: |
+        How did you install Certbot? Example:
+          - **Installation method**: snap
+      placeholder: snap
+  - type: input
+    attributes:
+      label: Certbot Version
+      description: |
+        If you're not sure, you can find this by running `certbot --version`.
+      placeholder: 1.0.0
   - type: textarea
     id: what-happened
     attributes:
@@ -35,14 +43,15 @@ body:
         Invalid identifiers requested :: Cannot issue for "adfsfasdf.asdfasdf": Domain name does not end with a valid public suffix (TLD)
         Ask for help or search for solutions at https://community.letsencrypt.org. See the logfile /var/log/letsencrypt/letsencrypt.log or re-run Certbot with -v for more details.
         ```
+      placeholder: Tell us what you see!
     validations:
       required: true
   - type: textarea
     id: expected
     attributes:
-      label: Expected?
-      description: Certbot's behavior differed from what I expected because...
-      placeholder: What was expected?
+      label: Expected behavior
+      description: Certbot's behavior differed from what I expected because.
+      placeholder: "What was expected?"
     validations:
       required: true
   - type: textarea
