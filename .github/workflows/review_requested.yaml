@@ -1,8 +1,8 @@
-name: Issue Assigned
+name: Review Requested
 
 on:
-  issues:
-    types: [assigned]
+  pull_request:
+    types: [review_requested]
 jobs:
   send-mattermost-message:
     runs-on: ubuntu-latest
@@ -13,4 +13,4 @@ jobs:
         MATTERMOST_USERNAME: ${{ github.actor }}
         MATTERMOST_ICON_URL: https://github.githubassets.com/assets/GitHub-Mark-ea2971cee799.png
         TEXT: >
-            ${{ github.event.issue.assignee.login }} assigned to "${{ github.event.issue.title }}": ${{ github.event.issue.html_url }}
+            Review requested from ${{ github.event.requested_reviewer.login }} for "${{ github.event.pull_request.title }}": ${{ github.event.pull_request.html_url }}
