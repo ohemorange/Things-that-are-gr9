@@ -9,3 +9,4 @@ A running list.
 * pizza
 * forests
 * tea
+* chili oil
