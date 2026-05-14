@@ -1,0 +1,122 @@
+# Nightly pipeline running each day for main.
+name: Test workflow
+on:
+  workflow_dispatch:
+
+jobs:
+  # While many of these jobs could be grouped in a separate workflow, the github actions UI
+  # is much nicer if they are instead listed explicitly here.
+  ###########################
+  ####    testing jobs    ###
+  ###########################
+  standard_tests_jobs:
+    name: Standard tests
+    permissions:
+      contents: read
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo pass
+        shell: bash
+  extended_tests_jobs:
+    name: Extended tests
+    permissions:
+      contents: read
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo pass
+        shell: bash
+  ###########################
+  ####   packaging jobs   ###
+  ###########################
+  docker_packaging_jobs:
+    name: Docker packaging
+    permissions:
+      contents: read
+    runs-on: ubuntu-latest
+    steps:
+      - run: exit 1
+        shell: bash
+  snap_packaging_jobs:
+    name: Snap packaging
+    permissions:
+      contents: read
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo pass
+        shell: bash
+  create_changelog:
+    name: Create changelog
+    permissions:
+      contents: read
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo pass
+        shell: bash
+  ############################
+  ####     deploy jobs     ###
+  ############################
+  docker_deploy_jobs:
+    name: Deploy docker images
+    permissions:
+      contents: read
+    needs:
+      - standard_tests_jobs
+      - extended_tests_jobs
+      - docker_packaging_jobs
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo pass
+        shell: bash
+  snap_deploy_jobs:
+    name: Deploy snaps
+    permissions:
+      contents: read
+    needs:
+      - standard_tests_jobs
+      - extended_tests_jobs
+      - snap_packaging_jobs
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo pass
+        shell: bash
+  ############################
+  ####      rerun job      ###
+  ############################
+  re-run:
+    name: Re-run
+    needs:
+      - standard_tests_jobs
+      - extended_tests_jobs
+      - docker_packaging_jobs
+      - snap_packaging_jobs
+      - create_changelog
+      - docker_deploy_jobs
+      - snap_deploy_jobs
+    if: failure() && fromJSON(github.run_attempt) < 3
+    permissions:
+      actions: write
+      checks: write
+    runs-on: ubuntu-latest
+    steps:
+      - env:
+          GH_REPO: ${{ github.repository }}
+          GH_TOKEN: ${{ github.token }}
+          GH_DEBUG: api
+        run: gh workflow run rerun.yml -F run_id=${{ github.run_id }}
+        shell: bash
+  ###########################
+  ####       notify       ###
+  ###########################
+  notify:
+    name: Notify
+    needs:
+      - re-run
+    # Returns true when any previous step of a job fails. If you have a chain of dependent
+    # jobs, failure() returns true if any ancestor job fails.
+    if: failure() && (needs.re-run.result == 'skipped' || needs.re-run.result == 'failure')
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "notify mattermost lol"
+        shell: bash
+
+

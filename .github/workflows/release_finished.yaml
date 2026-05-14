@@ -1,0 +1,71 @@
+name: Release build finished
+
+on:
+  repository_dispatch:
+permissions: {}
+jobs:
+  send-mattermost-bmw:
+    if: ${{ github.event.client_payload.resource.requestedBy == 'bmw' }}
+    runs-on: ubuntu-latest
+    steps:
+    # we pin this action to a version tested and audited by certbot's
+    # maintainers for extra security. the full hash is used as doing so is
+    # recommended by zizmor
+    - uses: mattermost/action-mattermost-notify@b7d118e440bf2749cd18a4a8c88e7092e696257a
+      with:
+        MATTERMOST_WEBHOOK_URL: ${{ secrets.MATTERMOST_ASSIGN_WEBHOOK }}
+        TEXT: >
+            Review requested from ${{ github.event.requested_reviewer.login }} for "${{ github.event.pull_request.title }}": ${{ github.event.pull_request.html_url }}
+
+jobs:
+  send-mattermost-wgreenberg:
+    if: ${{ github.event.client_payload.resource.requestedBy == 'wgreenberg' }}
+    runs-on: ubuntu-latest
+    steps:
+    # we pin this action to a version tested and audited by certbot's
+    # maintainers for extra security. the full hash is used as doing so is
+    # recommended by zizmor
+    - uses: mattermost/action-mattermost-notify@b7d118e440bf2749cd18a4a8c88e7092e696257a
+      with:
+        MATTERMOST_WEBHOOK_URL: ${{ secrets.MATTERMOST_ASSIGN_WEBHOOK }}
+        TEXT: >
+            Review requested from ${{ github.event.requested_reviewer.login }} for "${{ github.event.pull_request.title }}": ${{ github.event.pull_request.html_url }}
+
+jobs:
+  send-mattermost-ohemorange:
+    if: ${{ github.event.client_payload.resource.requestedBy == 'ohemorange' }}
+    runs-on: ubuntu-latest
+    steps:
+    # we pin this action to a version tested and audited by certbot's
+    # maintainers for extra security. the full hash is used as doing so is
+    # recommended by zizmor
+    - uses: mattermost/action-mattermost-notify@b7d118e440bf2749cd18a4a8c88e7092e696257a
+      with:
+        MATTERMOST_WEBHOOK_URL: ${{ secrets.MATTERMOST_ASSIGN_WEBHOOK }}
+        TEXT: >
+            Review requested from ${{ github.event.requested_reviewer.login }} for "${{ github.event.pull_request.title }}": ${{ github.event.pull_request.html_url }}
+
+
+
+jobs:
+  run_if_failure:
+    if: ${{ !github.event.client_payload.passed }}
+    runs-on: ubuntu-latest
+    steps:
+      - env:
+          MESSAGE: ${{ github.event.client_payload.message }}
+        run: echo $MESSAGE
+
+
+  {
+  "event_type": "webhook",
+  "client_payload": {
+    "passed": false,
+    "message": "Error: timeout"
+  }
+}
+
+
+
+
+The maximum number of top-level properties in client_payload is 10.
