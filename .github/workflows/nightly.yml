@@ -29,6 +29,7 @@ jobs:
   ####   packaging jobs   ###
   ###########################
   docker_packaging_jobs:
+    if: fromJSON(github.run_attempt) < 2
     name: Docker packaging
     permissions:
       contents: read
