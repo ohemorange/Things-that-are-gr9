@@ -6,9 +6,6 @@ on:
     inputs:
       dockerTag:
         type: string
-    secrets:
-      GITHUB_TOKEN:
-        required: true
 
 env:
   DOCKER_TAG: "${{ inputs.dockerTag }}"
@@ -77,45 +74,3 @@ jobs:
     steps:
       - shell: bash
         run: exit 0
-  create_github_release:
-    name: Create GitHub release
-    needs:
-      - standard_tests_jobs
-      - extended_tests_jobs
-      - docker_packaging_jobs
-      - snap_packaging_jobs
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v6.0.2
-        with:
-          persist-credentials: false
-      - name: Download changelog
-        uses: actions/download-artifact@v8.0.1
-        with:
-          name: changelog
-          path: "${{ github.workspace }}"
-      - name: GitHub release
-        shell: bash
-        env:
-          GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
-          TAG: ${{ github.ref_name }}
-        run: |-
-          set -x
-
-          git branch --show-current
-          git status
-          git log
-          ls .
-          ls "./release_notes.md"
-          ls "${{ github.workspace }}/release_notes.md"
-          ls "${{ github.workspace }}"
-          cat "./release_notes.md"
-
-
-          gh release create "$TAG" "${GITHUB_WORKSPACE}/packages/"{*.tar.gz,SHA256SUMS*} \
-            --title "Certbot ${TAG#v}" \
-            --notes-file "$GITHUB_WORKSPACE/release_notes.md"
-

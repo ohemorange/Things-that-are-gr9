@@ -20,8 +20,6 @@ jobs:
     uses: "./.github/workflows/test_and_deploy.yml"
     with:
       dockerTag: "${{ github.ref_name }}"
-    secrets:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     permissions:
       contents: write
   create_github_release:
