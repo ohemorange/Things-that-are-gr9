@@ -37,11 +37,11 @@ jobs:
   docker_packaging_jobs:
     name: Docker packaging
     runs-on: ubuntu-latest
-    env:
-      dockerTag: "${{ env.DOCKER_TAG }}"
     steps:
       - run: echo $dockerTag
         shell: bash
+        env:
+          dockerTag: "${{ env.DOCKER_TAG }}"
   snap_packaging_jobs:
     name: Snap packaging
     runs-on: ubuntu-latest
