@@ -87,6 +87,8 @@ jobs:
       - docker_packaging_jobs
       - snap_packaging_jobs
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout
         uses: actions/checkout@v6.0.2
@@ -104,10 +106,6 @@ jobs:
           TAG: ${{ github.ref_name }}
         run: |-
           set -x
-          ls $GITHUB_WORKSPACE
-          ls "$GITHUB_WORKSPACE/packages/"
-          ls "$GITHUB_WORKSPACE/packages/test_artifact.tar.gz"
-          ls "${GITHUB_WORKSPACE}/packages/"{*.tar.gz,SHA256SUMS*}
 
           gh release create "$TAG" "${GITHUB_WORKSPACE}/packages/"{*.tar.gz,SHA256SUMS*} \
             --title "Certbot ${TAG#v}" \
