@@ -17,6 +17,7 @@ permissions:
 
 jobs:
   test_and_deploy:
+    name: Test and Deploy
     uses: "./.github/workflows/test_and_deploy.yml"
     with:
       dockerTag: "${{ github.ref_name }}"
