@@ -29,7 +29,7 @@ jobs:
         SUCCESS: "${{ inputs.success }}"
       run: |-
         AUTHOR_NAME="$(git log -1 --pretty=format:'%an')"
-        MESSAGE=$(tools/notify_mattermost.py "${AUTHOR_NAME}" "${SUCCESS}")
+        MESSAGE=$(tools/release_message.py "${AUTHOR_NAME}" "${SUCCESS}")
         echo "result=$MESSAGE" >> "$GITHUB_OUTPUT"
     - name: Send to mattermost
       uses: mattermost/action-mattermost-notify@b7d118e440bf2749cd18a4a8c88e7092e696257a
