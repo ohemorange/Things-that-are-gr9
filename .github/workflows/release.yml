@@ -98,10 +98,15 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAG: ${{ github.ref_name }}
         run: |-
-          gh release create "$TAG" "${GITHUB_WORKSPACE}/packages/{*.tar.gz,SHA256SUMS*}" \
+          echo $GITHUB_WORKSPACE
+          echo "$GITHUB_WORKSPACE/packages/{*.tar.gz,SHA256SUMS*}"
+          ls "$GITHUB_WORKSPACE/packages/"
+          ls $GITHUB_WORKSPACE
+          ls
+          gh release create "$TAG" "$GITHUB_WORKSPACE/packages/{*.tar.gz,SHA256SUMS*}" \
             --title "Certbot ${TAG#v}" \
             --target "$TAG"
-            --notes-file "$GITHUB_WORKSPACE/release_notes.md"
+            --notes-file "./release_notes.md"
 
   ###########################
   ####       notify       ###
