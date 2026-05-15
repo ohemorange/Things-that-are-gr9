@@ -60,6 +60,7 @@ def get_content(requested_for: str, success: bool):
             f"git author name.\n{build_url}")
     return text_body + "\n this is a test on a test repo don't worry!\n"
 
+random.seed()
 requested_for: str = sys.argv[1].rstrip()
 success: bool = eval(sys.argv[2].rstrip())
 print(get_content(requested_for, success))
