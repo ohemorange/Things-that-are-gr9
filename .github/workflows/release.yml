@@ -12,73 +12,18 @@ on:
         type: string
         required: true
 
-env:
-  DOCKER_TAG: "${{ github.ref_name }}"
-
 permissions:
   contents: read
 
 jobs:
-  # While many of these jobs could be grouped in a separate workflow, the github actions UI
-  # is much nicer if they are instead listed explicitly here.
-  ###########################
-  ####    testing jobs    ###
-  ###########################
-  standard_tests_jobs:
-    name: Standard tests
-    runs-on: ubuntu-latest
-    steps:
-      - shell: bash
-        run: exit 0
-  extended_tests_jobs:
-    name: Extended tests
-    runs-on: ubuntu-latest
-    steps:
-      - shell: bash
-        run: exit 0
-  ###########################
-  ####   packaging jobs   ###
-  ###########################
-  docker_packaging_jobs:
-    name: Docker packaging
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo $dockerTag
-        shell: bash
-        env:
-          dockerTag: "${{ env.DOCKER_TAG }}"
-  snap_packaging_jobs:
-    name: Snap packaging
-    runs-on: ubuntu-latest
-    steps:
-      - shell: bash
-        run: exit 0
-  create_changelog:
-    name: Create changelog
-    uses: "./.github/workflows/create_changelog.yml"
-  ############################
-  ####     deploy jobs     ###
-  ############################
-  docker_deploy_jobs:
-    name: Deploy docker images
-    needs:
-      - standard_tests_jobs
-      - extended_tests_jobs
-      - docker_packaging_jobs
-    runs-on: ubuntu-latest
-    steps:
-      - shell: bash
-        run: exit 0
-  snap_deploy_jobs:
-    name: Deploy snaps
-    needs:
-      - standard_tests_jobs
-      - extended_tests_jobs
-      - snap_packaging_jobs
-    runs-on: ubuntu-latest
-    steps:
-      - shell: bash
-        run: exit 0
+  test_and_deploy:
+    uses: "./.github/workflows/test_and_deploy.yml"
+    with:
+      dockerTag: "${{ github.ref_name }}"
+    secrets:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    permissions:
+      contents: write
   create_github_release:
     name: Create GitHub release
     needs:

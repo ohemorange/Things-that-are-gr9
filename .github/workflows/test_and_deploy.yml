@@ -1,0 +1,121 @@
+# Release pipeline to run our full test suite, build artifacts, and deploy them
+# for GitHub release tags.
+name: Test and Deploy
+on:
+  workflow_call:
+    inputs:
+      dockerTag:
+        type: string
+    secrets:
+      GITHUB_TOKEN:
+        type: string
+
+env:
+  DOCKER_TAG: "${{ inputs.dockerTag }}"
+
+permissions:
+  contents: read
+
+jobs:
+  # While many of these jobs could be grouped in a separate workflow, the github actions UI
+  # is much nicer if they are instead listed explicitly here.
+  ###########################
+  ####    testing jobs    ###
+  ###########################
+  standard_tests_jobs:
+    name: Standard tests
+    runs-on: ubuntu-latest
+    steps:
+      - shell: bash
+        run: exit 0
+  extended_tests_jobs:
+    name: Extended tests
+    runs-on: ubuntu-latest
+    steps:
+      - shell: bash
+        run: exit 0
+  ###########################
+  ####   packaging jobs   ###
+  ###########################
+  docker_packaging_jobs:
+    name: Docker packaging
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo $dockerTag
+        shell: bash
+        env:
+          dockerTag: "${{ env.DOCKER_TAG }}"
+  snap_packaging_jobs:
+    name: Snap packaging
+    runs-on: ubuntu-latest
+    steps:
+      - shell: bash
+        run: exit 0
+  create_changelog:
+    name: Create changelog
+    uses: "./.github/workflows/create_changelog.yml"
+  ############################
+  ####     deploy jobs     ###
+  ############################
+  docker_deploy_jobs:
+    name: Deploy docker images
+    needs:
+      - standard_tests_jobs
+      - extended_tests_jobs
+      - docker_packaging_jobs
+    runs-on: ubuntu-latest
+    steps:
+      - shell: bash
+        run: exit 0
+  snap_deploy_jobs:
+    name: Deploy snaps
+    needs:
+      - standard_tests_jobs
+      - extended_tests_jobs
+      - snap_packaging_jobs
+    runs-on: ubuntu-latest
+    steps:
+      - shell: bash
+        run: exit 0
+  create_github_release:
+    name: Create GitHub release
+    needs:
+      - standard_tests_jobs
+      - extended_tests_jobs
+      - docker_packaging_jobs
+      - snap_packaging_jobs
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6.0.2
+        with:
+          persist-credentials: false
+      - name: Download changelog
+        uses: actions/download-artifact@v8.0.1
+        with:
+          name: changelog
+          path: "${{ github.workspace }}"
+      - name: GitHub release
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
+          TAG: ${{ github.ref_name }}
+        run: |-
+          set -x
+
+          git branch --show-current
+          git status
+          git log
+          ls .
+          ls "./release_notes.md"
+          ls "${{ github.workspace }}/release_notes.md"
+          ls "${{ github.workspace }}"
+          cat "./release_notes.md"
+
+
+          gh release create "$TAG" "${GITHUB_WORKSPACE}/packages/"{*.tar.gz,SHA256SUMS*} \
+            --title "Certbot ${TAG#v}" \
+            --notes-file "$GITHUB_WORKSPACE/release_notes.md"
+
