@@ -37,9 +37,10 @@ def get_message(success: bool):
         message = random.choice(fun_success_messages)
     else:
         message = "the release pipeline has failed."
+    return message
 
 def get_content(requested_for: str, success: bool):
-    build_url = f'{server_url}/{repo_name}/actions/runs/{run_id})'
+    build_url = f'{server_url}/{repo_name}/actions/runs/{run_id}'
 
     # We use github author here because it's what we have access to. If the name sometimes
     # changes, add any name it might be. Check the git log.
