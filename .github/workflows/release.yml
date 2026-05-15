@@ -110,6 +110,10 @@ jobs:
           git branch --show-current
           git status
           git log
+          ls .
+          ls "./release_notes.md"
+          ls "${{ github.workspace }}/release_notes.md"
+          ls "${{ github.workspace }}"
 
 
           gh release create "$TAG" "${GITHUB_WORKSPACE}/packages/"{*.tar.gz,SHA256SUMS*} \
