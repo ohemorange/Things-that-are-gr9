@@ -90,11 +90,11 @@ jobs:
         shell: bash
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          BRANCH: ${{ github.ref_name }}
+          TAG: ${{ github.ref_name }}
         run: |-
-          gh release create "$BRANCH" "${GITHUB_WORKSPACE}/packages/{*.tar.gz,SHA256SUMS*}" \
-            --title "Certbot ${BRANCH#v}" \
-            --target "$BRANCH"
+          gh release create "$TAG" "${GITHUB_WORKSPACE}/packages/{*.tar.gz,SHA256SUMS*}" \
+            --title "Certbot ${TAG#v}" \
+            --target "$TAG"
             --notes-file "$GITHUB_WORKSPACE/release_notes.md"
 
   ###########################
