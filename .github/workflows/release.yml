@@ -108,7 +108,6 @@ jobs:
 
           gh release create "$TAG" "$GITHUB_WORKSPACE/packages/"{*.tar.gz,SHA256SUMS*} \
             --title "Certbot ${TAG#v}" \
-            --target "$TAG"
             --notes-file "./release_notes.md"
 
   ###########################
