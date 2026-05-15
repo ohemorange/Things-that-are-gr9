@@ -8,7 +8,7 @@ on:
         type: string
     secrets:
       GITHUB_TOKEN:
-        type: string
+        required: true
 
 env:
   DOCKER_TAG: "${{ inputs.dockerTag }}"
