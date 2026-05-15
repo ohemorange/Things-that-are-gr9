@@ -98,7 +98,7 @@ jobs:
         uses: actions/download-artifact@v8.0.1
         with:
           name: changelog
-          path: "${{ github.workspace }}/release_notes.md"
+          path: "${{ github.workspace }}"
       - name: GitHub release
         shell: bash
         env:
@@ -114,6 +114,7 @@ jobs:
           ls "./release_notes.md"
           ls "${{ github.workspace }}/release_notes.md"
           ls "${{ github.workspace }}"
+          cat "./release_notes.md"
 
 
           gh release create "$TAG" "${GITHUB_WORKSPACE}/packages/"{*.tar.gz,SHA256SUMS*} \
