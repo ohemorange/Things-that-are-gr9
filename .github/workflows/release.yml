@@ -1,6 +1,7 @@
 # Release pipeline to run our full test suite, build artifacts, and deploy them
 # for GitHub release tags.
 name: Release
+run-name: Release Certbot ${{ github.ref_name }}
 on:
   push:
     tags:
