@@ -4,8 +4,12 @@ name: Release
 on:
   push:
     tags:
-    - v*
+      - v*
   workflow_dispatch:
+    inputs:
+      tag:
+        type: string
+        required: true
 
 env:
   DOCKER_TAG: "${{ github.ref_name }}"
