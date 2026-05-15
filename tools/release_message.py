@@ -52,7 +52,7 @@ def get_content(requested_for: str, success: bool):
     }
 
     if requested_for in usernames_map:
-        text_body = f'{get_greeting()} @{usernames_map[requested_for]}, {get_message()}\n{build_url}'
+        text_body = f'{get_greeting()} @{usernames_map[requested_for]}, {get_message(success)}\n{build_url}'
     else:
         text_body = (f"{get_greeting()} {requested_for}, {get_message(success)}\nIf you'd like to get @ mentioned for "
             "releases you do in the future, please modify tools/notify_mattermost.py with your "
