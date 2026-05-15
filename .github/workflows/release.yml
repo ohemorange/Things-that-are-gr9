@@ -107,6 +107,11 @@ jobs:
         run: |-
           set -x
 
+          git branch --show-current
+          git status
+          git log
+
+
           gh release create "$TAG" "${GITHUB_WORKSPACE}/packages/"{*.tar.gz,SHA256SUMS*} \
             --title "Certbot ${TAG#v}" \
             --notes-file "./release_notes.md"
