@@ -1,0 +1,27 @@
+name: Create changelog
+on:
+  workflow_call:
+permissions:
+  contents: read
+
+jobs:
+  prepare:
+    name: Changelog
+    runs-on: ubuntu-latest
+    steps:
+    # If we change the output filename from `release_notes.md`, it should also be changed in tools/create_github_release.py
+    - name: checkout
+      uses: actions/checkout@v6.0.2
+      with:
+        persist-credentials: false
+    - name: Prepare changelog
+      run: |-
+        CERTBOT_VERSION=1.0.0
+        echo "$CERTBOT_VERSION happened" >> "${{ runner.temp }}/release_notes.md"
+      shell: bash
+    - name: Publish changelog
+      uses: actions/upload-artifact@v7.0.0
+      with:
+        # If we change the artifact's name, it should also be changed in tools/create_github_release.py
+        name: changelog
+        path: "${{ runner.temp }}/release_notes.md"
