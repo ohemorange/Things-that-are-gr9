@@ -129,14 +129,13 @@ jobs:
       - docker_deploy_jobs
       - snap_deploy_jobs
       - create_github_release
-    uses: "./.github/workflows/notify_release.yml"
     permissions:
       actions: read
       contents: read
-    with:
-      success: 'True'
-    secrets:
-      MATTERMOST_PUBLIC_CERTBOT_CHANNEL_WEBHOOK: "${{ secrets.MATTERMOST_PUBLIC_CERTBOT_CHANNEL_WEBHOOK }}"
+    steps:
+      - shell: bash
+        run: |-
+        echo "${{ github. actor }}"
   notify_failure:
     needs:
       - docker_deploy_jobs
