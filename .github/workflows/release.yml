@@ -132,6 +132,7 @@ jobs:
     permissions:
       actions: read
       contents: read
+    runs-on: ubuntu-latest
     steps:
       - shell: bash
         run: |-
