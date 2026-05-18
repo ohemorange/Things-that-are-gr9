@@ -135,7 +135,7 @@ jobs:
     steps:
       - shell: bash
         run: |-
-        echo "${{ github. actor }}"
+        echo "${{ github.actor }}"
   notify_failure:
     needs:
       - docker_deploy_jobs
