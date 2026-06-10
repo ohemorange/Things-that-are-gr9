@@ -28,7 +28,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - shell: bash
-        run: exit 0
+        run: exit 1
   ###########################
   ####   packaging jobs   ###
   ###########################
