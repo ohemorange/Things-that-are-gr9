@@ -48,7 +48,10 @@ jobs:
         run: exit 0
   create_changelog:
     name: Create changelog
-    uses: "./.github/workflows/create_changelog.yml"
+    runs-on: ubuntu-latest
+    steps:
+      - shell: bash
+        run: exit 0
   ############################
   ####     deploy jobs     ###
   ############################
