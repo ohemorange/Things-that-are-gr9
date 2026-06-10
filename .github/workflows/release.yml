@@ -5,23 +5,81 @@ run-name: Release Certbot ${{ github.ref_name }}
 on:
   push:
     tags:
-      - v*
+    - v*
 
 permissions:
   contents: read
 
 jobs:
-  test_and_deploy:
-    name: Test and Deploy
-    uses: "./.github/workflows/test_and_deploy.yml"
-    with:
-      dockerTag: "${{ github.ref_name }}"
-    permissions:
-      contents: write
+  # While many of these jobs could be grouped in a separate workflow, the github actions UI
+  # is much nicer if they are instead listed explicitly here. As a result, changes made here
+  # may need to be mirrored in .github/workflows/nightly.yml.
+  ###########################
+  ####    testing jobs    ###
+  ###########################
+  standard_tests_jobs:
+    name: Standard tests
+    runs-on: ubuntu-latest
+    steps:
+      - shell: bash
+        run: exit 0
+  extended_tests_jobs:
+    name: Extended tests
+    runs-on: ubuntu-latest
+    steps:
+      - shell: bash
+        run: exit 0
+  ###########################
+  ####   packaging jobs   ###
+  ###########################
+  docker_packaging_jobs:
+    name: Docker packaging
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo $dockerTag
+        shell: bash
+        env:
+          dockerTag: "${{ github.ref_name }}"
+  snap_packaging_jobs:
+    name: Snap packaging
+    runs-on: ubuntu-latest
+    steps:
+      - shell: bash
+        run: exit 0
+  create_changelog:
+    name: Create changelog
+    uses: "./.github/workflows/create_changelog.yml"
+  ############################
+  ####     deploy jobs     ###
+  ############################
+  docker_deploy_jobs:
+    name: Deploy docker images
+    needs:
+      - standard_tests_jobs
+      - extended_tests_jobs
+      - docker_packaging_jobs
+    runs-on: ubuntu-latest
+    steps:
+      - shell: bash
+        run: exit 0
+  snap_deploy_jobs:
+    name: Deploy snaps
+    needs:
+      - standard_tests_jobs
+      - extended_tests_jobs
+      - snap_packaging_jobs
+    runs-on: ubuntu-latest
+    steps:
+      - shell: bash
+        run: exit 0
   create_github_release:
     name: Create GitHub release
     needs:
-      - test_and_deploy
+      - standard_tests_jobs
+      - extended_tests_jobs
+      - docker_packaging_jobs
+      - snap_packaging_jobs
+      - create_changelog
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -41,18 +99,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAG: ${{ github.ref_name }}
         run: |-
-          set -x
-
-          git branch --show-current
-          git status
-          git log
-          ls .
-          ls "./release_notes.md"
-          ls "${{ github.workspace }}/release_notes.md"
-          ls "${{ github.workspace }}"
-          cat "./release_notes.md"
-
-
           gh release create "$TAG" "${GITHUB_WORKSPACE}/packages/"{*.tar.gz,SHA256SUMS*} \
             --title "Certbot ${TAG#v}" \
             --notes-file "$GITHUB_WORKSPACE/release_notes.md"
@@ -61,25 +107,26 @@ jobs:
   ####       notify       ###
   ###########################
   notify_success:
-    needs:
-      - create_github_release
-    uses: "./.github/workflows/notify_release.yml"
-    permissions:
-      actions: read
-      contents: read
+    name: Notify success
     with:
       success: 'True'
-    secrets:
-      MATTERMOST_PUBLIC_CERTBOT_CHANNEL_WEBHOOK: "${{ secrets.MATTERMOST_PUBLIC_CERTBOT_CHANNEL_WEBHOOK }}"
-  notify_failure:
-    needs:
+    needs: &notify_needs
+      - docker_deploy_jobs
+      - snap_deploy_jobs
       - create_github_release
-    if: ${{ failure() }}
-    uses: "./.github/workflows/notify_release.yml"
-    permissions:
+    uses: &notify_uses
+      - "./.github/workflows/notify_release.yml"
+    permissions: &notify_permissions
       actions: read
       contents: read
+    secrets: &notify_secrets
+      MATTERMOST_PUBLIC_CERTBOT_CHANNEL_WEBHOOK: "${{ secrets.MATTERMOST_PUBLIC_CERTBOT_CHANNEL_WEBHOOK }}"
+  notify_failure:
+    name: Notify failure
     with:
       success: 'False'
-    secrets:
-      MATTERMOST_PUBLIC_CERTBOT_CHANNEL_WEBHOOK: "${{ secrets.MATTERMOST_PUBLIC_CERTBOT_CHANNEL_WEBHOOK }}"
+    if: ${{ failure() }}
+    needs: *notify_needs
+    uses: *notify_uses
+    permissions: *notify_permissions
+    secrets: *notify_secrets
